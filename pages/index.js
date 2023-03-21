@@ -1,11 +1,45 @@
 import Head from "next/head";
 import Layout, { siteTitle } from "../components/layout";
 import utilStyles from "../styles/utils.module.css";
-import { getSortedPostsData } from "../lib/posts";
 import Link from "next/link";
 import Date from "../components/date";
+import clientPromise from '../lib/mongodb'
+import { InferGetServerSidePropsType } from 'next'
+import matter from "gray-matter";
 
-export default function Home({ allPostsData }) {
+
+export async function getServerSideProps(context) {
+  let allPostsData = [];
+  try {
+    const client = await clientPromise;
+    const collection = await client.db("blog").collection("posts");
+    const sort = { date: -1 };
+    const allDocs = await collection.find({}).sort(sort);
+   
+    await allDocs.forEach((doc) => {
+      const id = doc.path;
+      const title = doc.title;
+      const date = doc.date;
+      const data = matter(doc.content);
+      allPostsData.push({ id, title, date, ...data.data });
+    });
+
+    return {
+          props: {
+            allPostsData
+          },
+        };
+  } catch (e) {
+    console.error(e)
+    return {
+      props: {
+        allPostsData
+      },
+    };
+  }
+}
+
+export default function Home(props) {
   return (
     <Layout home>
       <Head>
@@ -13,17 +47,15 @@ export default function Home({ allPostsData }) {
       </Head>
       <section className={utilStyles.headingMd}>
         <p>
-          Hey there! My name is <b>Enes</b>.
+          Hallöchen! Das ist eine kleine Erweiterung vom <a href="https://nextjs.org/learn">NextJS Getting Started Tutorial</a>
         </p>
-        <p>
-          (This is a sample website - you’ll be building a site like this on{" "}
-          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
-        </p>
+        <desc>Ich habe das ganze um eine Datenbankverbindung erweitert! In Zukunft möchte ich auch eine UI einbauen, mit der man Posts erstellen kann :^)</desc>
+        
       </section>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h2 className={utilStyles.headingLg}>Blog</h2>
         <ul className={utilStyles.list}>
-          {allPostsData.map(({ id, date, title }) => (
+            {props.allPostsData.map(({ id, date, title }) => (
             <li className={utilStyles.listItem} key={id}>
               <Link href={`/posts/${id}`}>{title}</Link>
               <br />
@@ -36,14 +68,4 @@ export default function Home({ allPostsData }) {
       </section>
     </Layout>
   );
-}
-
-export async function getStaticProps() {
-  const allPostsData = getSortedPostsData();
-
-  return {
-    props: {
-      allPostsData,
-    },
-  };
 }

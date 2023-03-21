@@ -1,40 +1,77 @@
-import Layout from '../../components/layout';
-import { getAllPostIds, getPostData } from '../../lib/posts';
-import Head from 'next/head';
-import Date from '../../components/date';
-import utilStyles from '../../styles/utils.module.css'
+import Layout from "../../components/layout";
+import Head from "next/head";
+import Date from "../../components/date";
+import utilStyles from "../../styles/utils.module.css";
+import clientPromise from "../../lib/mongodb";
+import matter from "gray-matter";
+import { remark } from "remark";
+import html from "remark-html";
 
-export default function Post({ postData }) {
-    return (
-      <Layout>
-        <Head>
-          <title>{postData.title}</title>
-          <link rel='icon' href="favicon.ico"></link>
-        </Head>
-        <article>
-          <h1 className={utilStyles.headingXl}>{postData.title}</h1>
-          <div className={utilStyles.lightText}>
-            <Date dateString={postData.date} />
-          </div>
-          <div dangerouslySetInnerHTML={{ __html: postData.contentHtml }} />
-        </article>
-      </Layout>
-    );
-  }
+export async function getServerSideProps(context) {
+  const id = context.params.id;
 
-export async function getStaticPaths(){
-    const paths = getAllPostIds();
-    return {
-        paths,
-        fallback: false
+  const client = await clientPromise;
+  const collection = await client.db("blog").collection("posts");
+  let postDocument = await collection.findOne({ path: id });
+
+  if(postDocument){
+    const processedContent = await remark().use(html).process(postDocument.content)
+    const contentHtml = processedContent.toString();
+    const content = matter(postDocument.content)
+    const dateOfPost = postDocument.date
+    const returnObject = {
+      id,
+      dateOfPost,
+      contentHtml
     }
-}
 
-export async function getStaticProps({ params }) {
-    const postData = await getPostData(params.id);
     return {
       props: {
-        postData,
+       returnObject
+      },
+    };
+  } else {
+    return {
+      props: {
+       returnObject: {}
       },
     };
   }
+ 
+
+
+
+  
+}
+
+export default function Post({ returnObject }) {
+  if(returnObject.id){
+    return (
+      <Layout>
+        <Head>
+          <title>{returnObject.title}</title>
+            <link rel='icon' href="favicon.ico"></link>
+        </Head>
+        <article>
+            <h1 className={utilStyles.headingXl}>{returnObject.title}</h1>
+            <div className={utilStyles.lightText}>
+  
+              <Date dateString={returnObject.dateOfPost} />
+            </div>
+            <div dangerouslySetInnerHTML={{ __html: returnObject.contentHtml }} />
+          </article>
+      </Layout>
+    );
+  } else {
+    return (
+      <Layout>
+        <h1>404</h1>
+        <h2>Wir konnten diesen Post leider nicht finden.</h2>
+      </Layout>
+    )
+  }
+  
+  
+  
+}
+
