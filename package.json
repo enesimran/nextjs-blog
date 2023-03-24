@@ -11,6 +11,7 @@
     "cookies": "^0.8.0",
     "date-fns": "^2.29.3",
     "gray-matter": "^4.0.3",
+    "js-cookie": "^3.0.1",
     "mongodb": "^5.1.0",
     "next": "latest",
     "nookies": "^2.5.2",

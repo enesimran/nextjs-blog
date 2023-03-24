@@ -14,7 +14,7 @@ export async function getServerSideProps(context) {
   const collection = await client.db("blog").collection("posts");
   let postDocument = await collection.findOne({ path: id });
 
-  if(postDocument){
+  if (postDocument) {
     const processedContent = await remark().use(html).process(postDocument.content)
     const contentHtml = processedContent.toString();
     const content = matter(postDocument.content)
@@ -27,39 +27,34 @@ export async function getServerSideProps(context) {
 
     return {
       props: {
-       returnObject
+        returnObject
       },
     };
   } else {
     return {
       props: {
-       returnObject: {}
+        returnObject: {}
       },
     };
   }
- 
-
-
-
-  
 }
 
 export default function Post({ returnObject }) {
-  if(returnObject.id){
+  if (returnObject.id) {
     return (
       <Layout>
         <Head>
           <title>{returnObject.title}</title>
-            <link rel='icon' href="favicon.ico"></link>
+          <link rel='icon' href="favicon.ico"></link>
         </Head>
         <article>
-            <h1 className={utilStyles.headingXl}>{returnObject.title}</h1>
-            <div className={utilStyles.lightText}>
-  
-              <Date dateString={returnObject.dateOfPost} />
-            </div>
-            <div dangerouslySetInnerHTML={{ __html: returnObject.contentHtml }} />
-          </article>
+          <h1 className={utilStyles.headingXl}>{returnObject.title}</h1>
+          <div className={utilStyles.lightText}>
+
+            <Date dateString={returnObject.dateOfPost} />
+          </div>
+          <div dangerouslySetInnerHTML={{ __html: returnObject.contentHtml }} />
+        </article>
       </Layout>
     );
   } else {
@@ -70,8 +65,8 @@ export default function Post({ returnObject }) {
       </Layout>
     )
   }
-  
-  
-  
+
+
+
 }
 

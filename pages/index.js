@@ -52,7 +52,7 @@ export default function Home(props) {
         <p>
           Hallöchen! Das ist eine kleine Erweiterung vom <a href="https://nextjs.org/learn">NextJS Getting Started Tutorial</a>
         </p>
-        <desc>Ich habe das ganze um eine Datenbankverbindung erweitert! In Zukunft möchte ich auch eine UI einbauen, mit der man Posts erstellen kann :^)</desc>
+        <p>Ich habe das ganze um eine Datenbankverbindung erweitert! In Zukunft möchte ich auch eine UI einbauen, mit der man Posts erstellen kann :^)</p>
 
       </section>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
