@@ -9,7 +9,7 @@ import { parseCookies } from "nookies";
 export default function Dashboard(props) {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [cookieSetter, setCookie] = useCookies(["isLoggedIn"]);
+  const [cookieSetter, setCookie, removeCookie] = useCookies(["isLoggedIn"]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -35,6 +35,7 @@ export default function Dashboard(props) {
           const expires = new Date(now.getTime() + 60 * 60 * 1000); // 1 hour
           setCookie("isLoggedIn", "true", { path: "/", expires });
           setIsLoggedIn(true);
+          setPassword("");
         } else {
           setErrorMessage(data.message);
         }
@@ -46,11 +47,18 @@ export default function Dashboard(props) {
     }
   };
 
+  function logout() {
+    removeCookie('isLoggedIn', { path: '/' })
+    setIsLoggedIn(false);
+  }
+
   if (isLoggedIn == true) {
     return (
       <Layout className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h1>Dashboard</h1>
         <Link href={"/admin/new-post"}>Neuer Post</Link>
+        <br/><br/>
+        <button onClick={logout}>Logout</button>
       </Layout>
     );
   } else {
