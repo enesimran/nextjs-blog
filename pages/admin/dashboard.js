@@ -4,6 +4,7 @@ import utilStyles from "../../styles/utils.module.css";
 import Link from "next/link";
 import { useCookies } from "react-cookie";
 import { parseCookies } from "nookies";
+import Head from "next/head";
 
 
 export default function Dashboard(props) {
@@ -64,13 +65,21 @@ export default function Dashboard(props) {
   } else {
     return (
       <Layout>
+
+      <Head>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"></link>
+      </Head>
+
         <input
+        id="pass"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Passwort"
-        ></input>
-        <button onClick={handleLogin}>Login</button>
+        ></input><i onClick={() => {
+          document.getElementById("pass").setAttribute('type', document.getElementById("pass").getAttribute('type') === 'password' ? 'text' : 'password')
+        }} style={{marginLeft: -1.5 + "em", cursor: "pointer"}} class="far fa-eye" id="togglePassword"></i>
+        <button style={{display: "block"}} onClick={handleLogin}>Login</button>
       </Layout>
     );
   }
