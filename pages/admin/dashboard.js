@@ -46,14 +46,14 @@ export default function Dashboard(props) {
     } catch (error) {
       setErrorMessage("Ein Fehler ist aufgetreten. Bitte versuche es erneut.");
     }
-  };
+  }
 
   function logout() {
     removeCookie('isLoggedIn', { path: '/' })
     setIsLoggedIn(false);
   }
 
-  if (isLoggedIn == true) {
+  if (isLoggedIn === true) {
     return (
       <Layout className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
         <h1>Dashboard</h1>

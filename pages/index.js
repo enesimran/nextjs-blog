@@ -61,14 +61,7 @@ export default function Home(props) {
           <h2 style={{ display: "inline" }} className={utilStyles.headingLg}>Blog</h2>
           <Link href="/admin/dashboard">
             <Button variant="primary" style={{
-              padding: 0.5 + "em", marginLeft: 0.5 + "em", fontSize: 0.5 + "em", display: "inline-block", fontWeight: 400, color: "#" + 212529, textAlign: "center",
-              border: 1 + "px solid transparent",
-              padding: .375 + "rem" + .75 + "rem",
-              fontSize: 1 + "rem",
-              lineHeight: 1.5, borderRadius: .25 + "rem",
-              color: "#fff",
-              backgroundColor: "#007bff",
-              cursor: "pointer"
+              marginLeft: 0.5 + "em"
             }} >Dashboard</Button>
           </Link>
         </div>
